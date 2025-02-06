@@ -1,0 +1,27 @@
+{
+    "C_Cpp.errorSquiggles": "enabled",
+    "[cpp]": {
+        "files.encoding": "gbk"
+    },
+    "[c]": {
+        "files.encoding": "gbk"
+    },
+    "[python]": {
+        "files.encoding": "utf8"
+    },
+    "[php]": {
+        "files.encoding": "gbk"
+    },
+    "[java]": {
+        "files.encoding": "gbk"
+    },
+    "[md]": {
+        "files.encoding": "utf8"
+    },
+    "python.REPL.enableREPLSmartSend": false
+        
+    
+    
+    
+    
+}
