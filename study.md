@@ -6,6 +6,7 @@
 + lab02
 + lab03
 + lab04 Q3 buy
++ lab05
 + hog
 + cats P7 minimum_mewtations
 
