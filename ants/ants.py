@@ -119,7 +119,13 @@ class Ant(Insect):
             place.ant = self
         else:
             # BEGIN Problem 8b
-            assert place.ant is None, 'Too many ants in {0}'.format(place)
+            assert place.ant.is_container and place.ant.can_contain(self) or self.is_container and self.can_contain(place.ant), 'Too many ants in {0}'.format(place)     
+            self.place = place
+            if place.ant.is_container and place.ant.can_contain(self):
+                place.ant.store_ant(self)
+            if self.is_container and self.can_contain(place.ant):
+                self.store_ant(place.ant)
+                place.ant = self 
             # END Problem 8b
         Insect.add_to(self, place)
 
@@ -182,7 +188,6 @@ class ThrowerAnt(Ant):
             if cnt < self.lower_bound or a.bees == []:
                 cnt += 1
                 a = a.entrance
-                continue
             else:
                 return random_bee(a.bees)
         # END Problem 3 and 4
@@ -241,7 +246,7 @@ class FireAnt(Ant):
     food_cost = 5
     # OVERRIDE CLASS ATTRIBUTES HERE
     # BEGIN Problem 5
-    implemented = False   # Change to True to view in the GUI
+    implemented = True   # Change to True to view in the GUI
     # END Problem 5
 
     def __init__(self, health=3):
@@ -257,14 +262,53 @@ class FireAnt(Ant):
         """
         # BEGIN Problem 5
         "*** YOUR CODE HERE ***"
+        bees = self.place.bees[:]#浅拷贝
+        Ant.reduce_health(self, amount)
+        additional_damage = 0
+        if self.health <= 0:
+            additional_damage = self.damage
+        for i in bees:
+            i.reduce_health(amount + additional_damage)
+            #这一句代码调用了每个 bee 对象的 reduce_health 方法，
+            #实际上是对 bee 对象本身进行操作。如果调用后导致该 bee 的生命值小于或等于 0，
+            # 那么在 reduce_health 方法内部，会执行将该 bee 从原始列表（即 self.place.bees）中移除的操作。
+            # 然而，因为我们在循环开始时使用了切片操作 self.place.bees[:] 创建了一个浅拷贝，
+            # 所以这个新的列表（名为 bees）中的元素引用的是原始的 bee 对象，但列表本身并不和原列表绑定。
+            # 因此，当调用 i.reduce_health(amount + additional_damage) 执行后，
+            # 原始的 self.place.bees 可能会删除掉失去生命的 bee，
+            # 但该操作不会影响到我们已经创建好的浅拷贝 bees 的结构。
+            # 换句话说，迭代过程中，bees 列表的内容不会发生变化，
+            # 但其中的对象状态可能会改变，并且原始列表中的元素可能会被减少
         # END Problem 5
 
 # BEGIN Problem 6
 # The WallAnt class
+class WallAnt(Ant):
+    name = 'Wall'
+    food_cost = 4
+    implemented = True
+    def __init__(self, health=4):
+        super().__init__(health)
 # END Problem 6
 
 # BEGIN Problem 7
 # The HungryAnt Class
+class HungryAnt(Ant):
+    name = 'Hungry'
+    food_cost = 4
+    chewing_turns = 3
+    implemented = True
+    def __init__(self, health=1):
+        super().__init__(health)
+        self.turns_to_chew = 0
+    def action(self, gamestate):
+        if self.turns_to_chew != 0:
+            self.turns_to_chew = (self.turns_to_chew + 1) % (HungryAnt.chewing_turns + 1)
+        else:
+            if self.place.bees != []:
+                luck_bee = random_bee(self.place.bees)#
+                luck_bee.reduce_health(luck_bee.health)
+                self.turns_to_chew = (self.turns_to_chew + 1) % (HungryAnt.chewing_turns + 1)
 # END Problem 7
 
 
@@ -281,11 +325,16 @@ class ContainerAnt(Ant):
     def can_contain(self, other):
         # BEGIN Problem 8a
         "*** YOUR CODE HERE ***"
+        if self.ant_contained == None and other.is_container == False:
+            return True
+        else:
+            return False
         # END Problem 8a
 
     def store_ant(self, ant):
         # BEGIN Problem 8a
         "*** YOUR CODE HERE ***"
+        self.ant_contained = ant
         # END Problem 8a
 
     def remove_ant(self, ant):
@@ -306,6 +355,8 @@ class ContainerAnt(Ant):
     def action(self, gamestate):
         # BEGIN Problem 8a
         "*** YOUR CODE HERE ***"
+        if self.ant_contained != None:
+            return self.ant_contained.action(gamestate)
         # END Problem 8a
 
 
@@ -316,11 +367,26 @@ class BodyguardAnt(ContainerAnt):
     food_cost = 4
     # OVERRIDE CLASS ATTRIBUTES HERE
     # BEGIN Problem 8c
-    implemented = False   # Change to True to view in the GUI
+    implemented = True   # Change to True to view in the GUI
+    def __init__(self, health=2):
+        super().__init__(health)
     # END Problem 8c
 
 # BEGIN Problem 9
 # The TankAnt class
+class TankAnt(ContainerAnt):
+    name = 'Tank'
+    damage = 1
+    food_cost = 6
+    implemented = True
+    def __init__(self, health=2):
+        super().__init__(health)
+    def action(self, gamestate):
+        for i in self.place.bees[:]:
+            i.reduce_health(self.damage)
+        if self.ant_contained != None:
+            return self.ant_contained.action(gamestate)
+    
 # END Problem 9
 
 
