@@ -4,14 +4,18 @@
 + hw03 Q6匿名函数递归想不出来
 + hw04
 + hw05 Q3 yield_paths
++ hw06
 + lab01
 + lab02
 + lab03
 + lab04 Q3 buy
 + lab05
 + lab06
++ lab07
++ lab08
 + hog
 + cats P7 minimum_mewtations
++ ants
 
 
 ### study
@@ -41,3 +45,6 @@ ants：problem5
 
 super() 返回一个代理对象，用于访问父类的方法
 super().__init__(health) 会自动传入 self。在 Python 中，当你在类的方法内使用 super() 时，它会自动把当前实例（self）作为第一个参数传递给父类的方法。
+
+pop()删除指定索引的元素
+remove()删除第一个匹配的值
