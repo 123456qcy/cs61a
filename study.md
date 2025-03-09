@@ -17,7 +17,8 @@
 + lab07
 + lab08
 + lab09 Q4又栽在repeat上了
-+ lan10
++ lab10
++ lab11
 + hog
 + cats P7 minimum_mewtations
 + ants
@@ -53,3 +54,22 @@ super().__init__(health) 会自动传入 self。在 Python 中，当你在类的
 
 pop()删除指定索引的元素
 remove()删除第一个匹配的值
+
+#### scheme
+
++ cdr 返回一个列表除第一个元素外的其他元素组成的列表
++ cons 
+```scheme
+(cons 1 2)         ; 返回点对 (1 . 2)
+(cons 1 '(2 3))    ; 返回列表 (1 2 3)
+(cons '(1 2) 3)    ; 返回 ((1 2) . 3)
+```
++ cond
+```scheme
+(cond
+  (条件1 表达式1)
+  (条件2 表达式2)
+  ...
+  (else 默认表达式))  ; else 子句可选
+```
++ define-macro 定义宏
